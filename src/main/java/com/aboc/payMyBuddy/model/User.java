@@ -9,26 +9,26 @@ import java.math.BigDecimal;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
+    @Column(name = "id")
     private int id;
 
-    @Column(name="username", nullable = false, unique = true, length=45)
+    @Column(name = "username", nullable = false, unique = true, length = 45)
     private String username;
 
-    @Column(name="email", nullable = false, unique = true, length=150)
+    @Column(name = "email", nullable = false, unique = true, length = 150)
     private String email;
 
-    @Column(name="password", nullable = false, length=45)
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name="solde")
+    @Column(name = "solde")
     private BigDecimal solde;
 
     //Constructor
-    public User(){}
+    public User() {
+    }
 
-    public User(int id, String username, String email, String password, BigDecimal solde){
-        this.id = id;
+    public User(String username, String email, String password, BigDecimal solde) {
         this.username = username;
         this.email = email;
         this.password = password;

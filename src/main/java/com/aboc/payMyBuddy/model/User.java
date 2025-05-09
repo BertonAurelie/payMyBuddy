@@ -1,8 +1,10 @@
 package com.aboc.payMyBuddy.model;
 
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Table(name = "user")
@@ -18,11 +20,14 @@ public class User {
     @Column(name = "email", nullable = false, unique = true, length = 150)
     private String email;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password", nullable = false, length = 250)
     private String password;
 
     @Column(name = "solde")
     private BigDecimal solde;
+
+    @Transient
+    private String role;
 
     //Constructor
     public User() {
@@ -74,6 +79,14 @@ public class User {
 
     public void setSolde(BigDecimal solde) {
         this.solde = solde;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
 

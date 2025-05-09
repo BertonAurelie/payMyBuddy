@@ -2,8 +2,6 @@ package com.aboc.payMyBuddy.model.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import java.math.BigDecimal;
 
 
 /**
@@ -17,13 +15,15 @@ public class CreatedUserDto {
     private String username;
 
     @NotBlank(message = "email may not be empty")
+    @Email(regexp = ".+@.+\\..+", message = "Please provide a valid email address")
     private String email;
 
     @NotBlank(message = "password may not be empty")
     private String password;
 
     //Constructor
-    public CreatedUserDto(){}
+    public CreatedUserDto() {
+    }
 
     //GETTER SETTER
 

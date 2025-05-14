@@ -20,10 +20,17 @@ public class SpringSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.authorizeHttpRequests(auth -> {
-            auth.requestMatchers("/admin").hasRole("ADMIN");
-            auth.requestMatchers("/user").hasRole("USER");
+            auth.requestMatchers("/api/user").hasRole("USER");
+            auth.requestMatchers("/*").hasRole("ADMIN");
+            auth.requestMatchers("/api/users/create").permitAll();
+            auth.requestMatchers("/api/users/update").hasRole("USER");
+
             auth.anyRequest().authenticated();
-        }).formLogin(Customizer.withDefaults()).build();
+        })
+                //.formLogin(Customizer.withDefaults())
+                .httpBasic(Customizer.withDefaults())
+                .csrf(csrf -> csrf.disable())
+                .build();
     }
 
     @Bean
@@ -32,9 +39,12 @@ public class SpringSecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http, BCryptPasswordEncoder bCryptPasswordEncoder) throws Exception{
+    public AuthenticationManager authenticationManager(HttpSecurity http, BCryptPasswordEncoder bCryptPasswordEncoder) throws Exception {
         AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
-        authenticationManagerBuilder.userDetailsService(customUserDetailsService).passwordEncoder(bCryptPasswordEncoder);
+        authenticationManagerBuilder
+                .userDetailsService(customUserDetailsService)
+                .passwordEncoder(bCryptPasswordEncoder);
         return authenticationManagerBuilder.build();
     }
+
 }

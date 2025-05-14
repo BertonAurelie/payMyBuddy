@@ -1,8 +1,8 @@
 package com.aboc.payMyBuddy.service;
 
-import com.aboc.payMyBuddy.exception.ErrorEntity;
 import com.aboc.payMyBuddy.exception.RequestException;
-import com.aboc.payMyBuddy.model.User;
+import com.aboc.payMyBuddy.model.CustomUserDetails;
+import com.aboc.payMyBuddy.model.UserDb;
 import com.aboc.payMyBuddy.model.dto.mapper.CreatedUserMapper;
 import com.aboc.payMyBuddy.model.dto.request.CreatedUserDto;
 import com.aboc.payMyBuddy.repository.UserRepository;
@@ -33,9 +33,9 @@ public class UserService {
     /**
      * retrieves all users from DB
      *
-     * @return a list of {@link User}
+     * @return a list of {@link UserDb}
      */
-    public Iterable<User> getUsers() {
+    public Iterable<UserDb> getUsers() {
         return userRepository.findAll();
     }
 
@@ -45,7 +45,7 @@ public class UserService {
      * @param id
      * @return Optional<User>
      */
-    public Optional<User> getUserById(int id) {
+    public Optional<UserDb> getUserById(int id) {
         return userRepository.findById(id);
     }
 
@@ -65,11 +65,37 @@ public class UserService {
 
         logger.info("creating user...");
         String hashedPassword = passwordEncoder.encode(userDto.getPassword());
-        User user = CreatedUserMapper.toEntity(userDto);
-        int result = userRepository.createUser(user.getUsername(), user.getEmail(), hashedPassword);
+        UserDb userDb = CreatedUserMapper.toEntity(userDto);
+        int result = userRepository.createUser(userDb.getUsername(), userDb.getEmail(), hashedPassword);
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object currentPrincipalName = authentication.getPrincipal();
         return result;
     }
 
+    public int updateUser(UserDb user){
+        //Retrieves authenticate user
+        CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        int currentPrincipalId = customUserDetails.getId();
+
+        //Check if it's the same ID
+        if(!(currentPrincipalId == user.getId())){
+            throw new RequestException("You are not allowed to update this user.");
+        }
+
+        if(user.getUsername() != null && userRepository.findUserByUserName(user.getUsername()) != 0){
+            throw  new RequestException("Username already used");
+        }
+        if(user.getEmail() != null && userRepository.findUserByEmail(user.getEmail()) != 0){
+            throw new RequestException("email already existing");
+        }
+
+        if (user.getPassword() != null) {
+            String hashedPassword = passwordEncoder.encode(user.getPassword());
+            user.setPassword(hashedPassword);
+        }
+
+        int result = userRepository.updateUser(currentPrincipalId, user.getUsername(), user.getEmail(), user.getPassword(), user.getSolde());
+        return result;
+    }
 }

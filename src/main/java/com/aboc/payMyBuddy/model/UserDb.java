@@ -1,26 +1,24 @@
 package com.aboc.payMyBuddy.model;
 
 import jakarta.persistence.*;
-import org.springframework.security.core.GrantedAuthority;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Entity
 @Table(name = "user")
-public class User {
+public class UserDb {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
 
-    @Column(name = "username", nullable = false, unique = true, length = 45)
+    @Column(name = "username",  unique = true, length = 45)
     private String username;
 
-    @Column(name = "email", nullable = false, unique = true, length = 150)
+    @Column(name = "email",  unique = true, length = 150)
     private String email;
 
-    @Column(name = "password", nullable = false, length = 250)
+    @Column(name = "password", length = 250)
     private String password;
 
     @Column(name = "solde")
@@ -30,10 +28,10 @@ public class User {
     private String role;
 
     //Constructor
-    public User() {
+    public UserDb() {
     }
 
-    public User(String username, String email, String password, BigDecimal solde) {
+    public UserDb(String username, String email, String password, BigDecimal solde) {
         this.username = username;
         this.email = email;
         this.password = password;

@@ -1,6 +1,6 @@
 package com.aboc.payMyBuddy;
 
-import com.aboc.payMyBuddy.model.User;
+import com.aboc.payMyBuddy.model.UserDb;
 import com.aboc.payMyBuddy.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -21,17 +21,17 @@ public class PayMyBuddyApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception{
-		Iterable<User> users = userService.getUsers();
+		Iterable<UserDb> users = userService.getUsers();
 		users.forEach(user -> System.out.println(user.getUsername()));
 
-		Optional<User> userId = userService.getUserById(1);
-		User user = userId.get();
+		Optional<UserDb> userId = userService.getUserById(1);
+		UserDb userDb = userId.get();
 
-		User userCreate = new User();
-		userCreate.setUsername("emma92");
-		userCreate.setEmail("emma.leroy@gmail.com");
-		userCreate.setPassword("motDePasseSecurise!");
-		userCreate.setSolde(new BigDecimal("250.75"));
+		UserDb userDbCreate = new UserDb();
+		userDbCreate.setUsername("emma92");
+		userDbCreate.setEmail("emma.leroy@gmail.com");
+		userDbCreate.setPassword("motDePasseSecurise!");
+		userDbCreate.setSolde(new BigDecimal("250.75"));
 		//User userSave = userService.createUser(userCreate);
 	}
 }

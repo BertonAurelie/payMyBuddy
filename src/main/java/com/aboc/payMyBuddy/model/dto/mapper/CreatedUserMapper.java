@@ -1,6 +1,6 @@
 package com.aboc.payMyBuddy.model.dto.mapper;
 
-import com.aboc.payMyBuddy.model.User;
+import com.aboc.payMyBuddy.model.UserDb;
 import com.aboc.payMyBuddy.model.dto.request.CreatedUserDto;
 
 /**
@@ -11,22 +11,22 @@ public class CreatedUserMapper {
 
     public CreatedUserMapper(){}
 
-    public static User toEntity(CreatedUserDto createdUserDto){
-        User user = new User();
+    public static UserDb toEntity(CreatedUserDto createdUserDto){
+        UserDb userDb = new UserDb();
 
-        user.setUsername(createdUserDto.getUsername());
-        user.setEmail(createdUserDto.getEmail());
-        user.setPassword(createdUserDto.getPassword());
+        userDb.setUsername(createdUserDto.getUsername());
+        userDb.setEmail(createdUserDto.getEmail());
+        userDb.setPassword(createdUserDto.getPassword());
 
-        return user;
+        return userDb;
     }
 
-    public static CreatedUserDto toDto(User user){
+    public static CreatedUserDto toDto(UserDb userDb){
         CreatedUserDto createdUserDto = new CreatedUserDto();
 
-        createdUserDto.setUsername(user.getUsername());
-        createdUserDto.setEmail(user.getEmail());
-        createdUserDto.setPassword(user.getPassword());
+        createdUserDto.setUsername(userDb.getUsername());
+        createdUserDto.setEmail(userDb.getEmail());
+        createdUserDto.setPassword(userDb.getPassword());
 
         return createdUserDto;
     }

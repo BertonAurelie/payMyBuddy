@@ -1,6 +1,6 @@
 package com.aboc.payMyBuddy;
 
-import com.aboc.payMyBuddy.model.User;
+import com.aboc.payMyBuddy.model.UserDb;
 import com.aboc.payMyBuddy.model.dto.request.CreatedUserDto;
 import com.aboc.payMyBuddy.repository.UserRepository;
 import com.aboc.payMyBuddy.service.UserService;
@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-public class UserServiceTest {
+public class UserDbServiceTest {
 
     @Mock
     private UserRepository userRepository;
@@ -31,14 +31,14 @@ public class UserServiceTest {
     @Test
     public void GivenListOfUsers_WhenGetAllUsers_thenReturnListOfUserName() {
         BigDecimal solde = new BigDecimal(0);
-        User user1 = new User("test1", "test1@example.com", "password1", solde);
-        User user2 = new User("test2", "test2@example.com", "password2", solde);
-        List<User> users = Arrays.asList(user1, user2);
-        List<User> result = new ArrayList<User>();
+        UserDb userDb1 = new UserDb("test1", "test1@example.com", "password1", solde);
+        UserDb userDb2 = new UserDb("test2", "test2@example.com", "password2", solde);
+        List<UserDb> userPayMyBuddies = Arrays.asList(userDb1, userDb2);
+        List<UserDb> result = new ArrayList<UserDb>();
 
-        when(userRepository.findAll()).thenReturn(users);
+        when(userRepository.findAll()).thenReturn(userPayMyBuddies);
 
-        Iterable<User> iterable = userService.getUsers();
+        Iterable<UserDb> iterable = userService.getUsers();
         iterable.forEach(result::add);
 
         assertNotNull(result);
@@ -50,13 +50,13 @@ public class UserServiceTest {
     @Test
     public void GivenListOfUsers_WhenGetUserById_thenReturnSpecificUser() {
         BigDecimal solde = new BigDecimal(0);
-        User user1 = new User("test1", "test1@example.com", "password1", solde);
-        Optional<User> userId = Optional.of(user1);
-        List<User> result = new ArrayList<User>();
+        UserDb userDb1 = new UserDb("test1", "test1@example.com", "password1", solde);
+        Optional<UserDb> userId = Optional.of(userDb1);
+        List<UserDb> result = new ArrayList<UserDb>();
 
         when(userRepository.findById(1)).thenReturn(userId);
 
-        Optional<User> optionalUser = userService.getUserById(1);
+        Optional<UserDb> optionalUser = userService.getUserById(1);
         optionalUser.ifPresent(result::add);
 
         assertNotNull(result);

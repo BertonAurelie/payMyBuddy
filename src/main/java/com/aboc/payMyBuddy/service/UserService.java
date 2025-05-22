@@ -5,6 +5,7 @@ import com.aboc.payMyBuddy.model.CustomUserDetails;
 import com.aboc.payMyBuddy.model.UserDb;
 import com.aboc.payMyBuddy.model.dto.mapper.CreatedUserMapper;
 import com.aboc.payMyBuddy.model.dto.request.CreatedUserDto;
+import com.aboc.payMyBuddy.model.dto.request.UpdatedUserDto;
 import com.aboc.payMyBuddy.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.Authentication;
 
 import java.util.Optional;
 
@@ -95,5 +97,27 @@ public class UserService {
 
         int result = userRepository.updateUser(currentPrincipalId, user.getUsername(), user.getEmail(), user.getPassword(), user.getSolde());
         return result;
+    }
+
+    public void addFriend(UpdatedUserDto friend){
+        //Retrieves authenticate user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+        int currentPrincipalId = customUserDetails.getId();
+
+        //On récupère les données de l'utilisateur connecté
+        UserDb userDb = userRepository.findUserById(currentPrincipalId);
+
+        // On cherche l'ami à ajouter via son email
+        UserDb friendDb = userRepository.findUserByEmail(friend.getEmail());
+
+        // Si l'ami existe et qu'il n'est pas déjà dans la liste
+        if (friendDb != null && !userDb.getFriends().contains(friendDb)) {
+            //On l'ajoute à la liste des amis de l'utilisateur connecté
+            userDb.getFriends().add(friendDb);
+
+            // On sauvegarde les nouvelles données dans la base de données
+            userRepository.save(userDb);
+        }
     }
 }

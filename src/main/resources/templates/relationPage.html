@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link th:href="@{/css/relationPage.css}" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
     <title>Document</title>
 </head>
 <body>
@@ -12,21 +15,25 @@
         <p>Pay My Buddy</p>
     </div>
     <nav class = "nav-bar">
-        <a class="nav-bar__button" href="#">transfer</a>
+        <a class="nav-bar__button" th:href="@{/transfert}">transfer</a>
         <a class="nav-bar__button" href="#">Profil</a>
-        <a class="nav-bar__button" href="#">Ajouter relation</a>
-        <a class="nav-bar__button" href="#" th:href="@{/logout}">Se déconnecter</a>
+        <a class="nav-bar__button" th:href="@{/relationPage}">Ajouter relation</a>
+        <a class="nav-bar__button" th:href="@{/logout}">Se déconnecter</a>
     </nav>
 </header>
 <main>
-    <div class="input-container">
-        <label for="input-bar">Chercher une relation</label>
-        <input
-                type = "text"
-                id="input-bar"
-                placeholder="Saisir une adresse mail">
-    </div>
-    <button class="input-button">Ajouter</button>
+    <form action="#" th:action="@{/relation}" th:object="${UpdatedUserDto}" method="post" class="form-container">
+        <div class="input-container">
+            <label for="input-bar">Chercher une relation</label>
+            <input
+                    type = "text"
+                    id="input-bar"
+                    name="email"
+                    placeholder="Saisir une adresse mail"
+            >
+        </div>
+        <button type="submit" class="input-button">Ajouter</button>
+    </form>
 </main>
 </body>
 </html>

@@ -26,4 +26,6 @@ public interface UserRepository extends CrudRepository<UserDb, Integer> {
     int updateUser(int user_id, String user_username, String user_email, String user_password, BigDecimal user_solde);
 
     public UserDb findUserByEmail(String email);
+
+    public UserDb findUserById(int id);
 }

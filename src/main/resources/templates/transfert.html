@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link th:href="@{/css/transfert.css}" rel="stylesheet">
+    <!--ajout kit font awesome-->
+    <script src="https://kit.fontawesome.com/ab674341b6.js" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <title>Document</title>
+</head>
+<body>
+<header>
+    <div class="logo">
+        <p>Pay My Buddy</p>
+    </div>
+    <nav class = "nav-bar">
+        <a class="nav-bar__button" th:href="@{/transfert}">transfer</a>
+        <a class="nav-bar__button" href="#">Profil</a>
+        <a class="nav-bar__button" th:href="@{/relationPage}">Ajouter relation</a>
+        <a class="nav-bar__button" th:href="@{/logout}">Se déconnecter</a>
+    </nav>
+</header>
+<main>
+    <div class="transfert-container">
+        <form>
+            <select name="transfert-form" id="transfert-select">
+                <option value="">Sélectionner une relation</option>
+            </select>
+            <input
+                    type="text"
+                    id="transfert-form__input"
+                    placeholder="Description"
+            >
+            <div class="solde-container">
+                <input
+                        type="text"
+                        id="solde-container__input"
+                        value="0 €"
+                >
+                <div class="choice--solde">
+                    <button type="button" class="arrow"><i class="fa-solid fa-chevron-up"></i></button>
+                    <button type="button" class="arrow"><i class="fa-solid fa-chevron-down"></i></button>
+                </div>
+            </div>
+            <button id="pay-button">
+                Payer
+            </button>
+        </form>
+    </div>
+    <div class="history-container">
+        <span>Mes Transactions</span>
+        <table>
+            <tr class="table-header">
+                <td>Relations</td>
+                <td>Description</td>
+                <td>Montant</td>
+            </tr>
+        </table>
+    </div>
+</main>
+</body>
+</html>

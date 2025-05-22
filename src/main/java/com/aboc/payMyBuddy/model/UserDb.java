@@ -1,8 +1,13 @@
 package com.aboc.payMyBuddy.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "user")
@@ -26,6 +31,20 @@ public class UserDb {
 
     @Transient
     private String role;
+
+    @ManyToMany(
+        fetch = FetchType.LAZY,
+            cascade = {
+                CascadeType.PERSIST,
+                CascadeType.MERGE
+            }
+    )
+    @JoinTable(
+        name = "user_relation", //nom de la table de jointure
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "friend_id")
+    )
+    private Set<UserDb> friends = new HashSet<>();
 
     //Constructor
     public UserDb() {
@@ -85,6 +104,14 @@ public class UserDb {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public Set<UserDb> getFriends() {
+        return friends;
+    }
+
+    public void setFriends(Set<UserDb> friends) {
+        this.friends = friends;
     }
 }
 

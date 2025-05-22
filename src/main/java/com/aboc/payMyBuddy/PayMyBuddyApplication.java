@@ -21,17 +21,5 @@ public class PayMyBuddyApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception{
-		Iterable<UserDb> users = userService.getUsers();
-		users.forEach(user -> System.out.println(user.getUsername()));
-
-		Optional<UserDb> userId = userService.getUserById(1);
-		UserDb userDb = userId.get();
-
-		UserDb userDbCreate = new UserDb();
-		userDbCreate.setUsername("emma92");
-		userDbCreate.setEmail("emma.leroy@gmail.com");
-		userDbCreate.setPassword("motDePasseSecurise!");
-		userDbCreate.setSolde(new BigDecimal("250.75"));
-		//User userSave = userService.createUser(userCreate);
 	}
 }

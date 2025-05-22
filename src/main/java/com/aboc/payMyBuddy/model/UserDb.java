@@ -12,10 +12,10 @@ public class UserDb {
     @Column(name = "id")
     private int id;
 
-    @Column(name = "username",  unique = true, length = 45)
+    @Column(name = "username", unique = true, length = 45)
     private String username;
 
-    @Column(name = "email",  unique = true, length = 150)
+    @Column(name = "email", unique = true, length = 150)
     private String email;
 
     @Column(name = "password", length = 250)

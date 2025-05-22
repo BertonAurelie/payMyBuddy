@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -20,21 +19,20 @@ public class SpringSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.authorizeHttpRequests(auth -> {
-            auth.requestMatchers("/api/user").hasRole("USER");
-            auth.requestMatchers("/*").hasRole("ADMIN");
-            auth.requestMatchers("/api/users/create").permitAll();
-            auth.requestMatchers("/api/users/update").hasRole("USER");
-
-            auth.anyRequest().authenticated();
-        })
-                //.formLogin(Customizer.withDefaults())
-                .httpBasic(Customizer.withDefaults())
-                .csrf(csrf -> csrf.disable())
+                    auth.requestMatchers("/css/**", "/images/**", "/login", "/registration").permitAll();
+                    auth.anyRequest().hasRole("USER");
+                })
+                .formLogin(form -> form
+                        .loginPage("/login").permitAll()
+                        .loginProcessingUrl("/login").permitAll()
+                        .usernameParameter("email")
+                        .defaultSuccessUrl("/relationPage", true)
+                )
                 .build();
     }
 
     @Bean
-    public BCryptPasswordEncoder passwordEncoder(){
+    public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(12);
     }
 

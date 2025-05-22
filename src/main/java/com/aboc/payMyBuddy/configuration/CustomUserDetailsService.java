@@ -4,11 +4,9 @@ package com.aboc.payMyBuddy.configuration;
 import com.aboc.payMyBuddy.model.CustomUserDetails;
 import com.aboc.payMyBuddy.model.UserDb;
 import com.aboc.payMyBuddy.repository.UserRepository;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,14 +21,15 @@ public class CustomUserDetailsService implements UserDetailsService {
     private UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
-        System.out.println("loadUserByUsername called with: " + username);
-        UserDb userDb = userRepository.findUserByUsername(username);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        System.out.println("user research..." + email);
+        UserDb userDb = userRepository.findUserByEmail(email);
+
         if (userDb == null) {
-            throw new UsernameNotFoundException("User not found");
+            throw new RuntimeException("Unknown user");
         }
 
-        // Assigner un rôle par défaut si le rôle est null
+        //Assigner un rôle par défaut si le rôle est null
         if (userDb.getRole() == null) {
             userDb.setRole("USER");
         }
@@ -41,7 +40,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         return new CustomUserDetails(userDb, authorities);
     }
 
-    private List<GrantedAuthority> getGrantedAuthorities(String role){
+    private List<GrantedAuthority> getGrantedAuthorities(String role) {
 
         List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
         authorities.add(new SimpleGrantedAuthority("ROLE_" + "USER"));

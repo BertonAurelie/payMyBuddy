@@ -1,10 +1,11 @@
 package com.aboc.payMyBuddy.model;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
 import java.util.Collection;
 
-public class CustomUserDetails extends User{
+public class CustomUserDetails extends User {
     private int id;
 
     public CustomUserDetails(UserDb userDb, Collection<? extends GrantedAuthority> authorities) {

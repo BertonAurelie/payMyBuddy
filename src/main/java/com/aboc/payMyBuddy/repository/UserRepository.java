@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 public interface UserRepository extends CrudRepository<UserDb, Integer> {
 
     @Query(value = "SELECT COUNT(*) FROM user WHERE email = :mail", nativeQuery = true)
-    int findUserByEmail(@Param("mail") String mail);
+    int findUserDbByEmail(@Param("mail") String mail);
 
     @Query(value = "SELECT COUNT(*) FROM user WHERE username = :username", nativeQuery = true)
     int findUserByUserName(@Param("username") String username);
@@ -25,7 +25,5 @@ public interface UserRepository extends CrudRepository<UserDb, Integer> {
     @Procedure(procedureName = "update_user")
     int updateUser(int user_id, String user_username, String user_email, String user_password, BigDecimal user_solde);
 
-    public UserDb findUserByUsername(String username);
-
-
+    public UserDb findUserByEmail(String email);
 }

@@ -3,24 +3,24 @@ package com.aboc.payMyBuddy.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name ="Transaction")
+@Table(name = "Transaction")
 public class Transaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
+    @Column(name = "id")
     private int id;
 
-    @Column(name="sender")
+    @Column(name = "sender")
     private String sender;
 
-    @Column(name="receiver")
+    @Column(name = "receiver")
     private String receiver;
 
-    @Column(name="description")
+    @Column(name = "description")
     private String description;
 
-    @Column(name="amount")
+    @Column(name = "amount")
     private double amount;
 
     //Constructor

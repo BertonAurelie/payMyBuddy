@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link th:href="@{/css/login.css}" rel="stylesheet">
+    <title>Document</title>
+</head>
+<body>
+    <div th:if="${error}" style="color: red;">
+        <p th:text="${error}"></p>
+    </div>
+
+    <form th:action="@{/login}" method="post" class = "form-container">
+        <logo>
+            <p id="logo">Pay My Buddy</p>
+        </logo>
+
+        <div class ="container">
+            <input
+                    type = "text"
+                    id="mail"
+                    placeholder="Mail"
+                    class="input-form"
+                    name="email"
+            >
+            <input
+                    type = "password"
+                    id="password"
+                    placeholder="Mot de passe"
+                    class="input-form"
+                    name="password"
+            >
+        </div>
+
+        <button type = "submit">Se connecter</button>
+    </form>
+</body>
+</html>

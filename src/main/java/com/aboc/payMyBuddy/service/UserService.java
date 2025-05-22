@@ -9,7 +9,6 @@ import com.aboc.payMyBuddy.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -55,9 +54,9 @@ public class UserService {
      * @param userDto
      * @return 1 if user created.
      */
-    public int createUser(CreatedUserDto userDto) throws Exception {
+    public int createUser(CreatedUserDto userDto) {
 
-        if (userRepository.findUserByEmail(userDto.getEmail()) != 0){
+        if (userRepository.findUserDbByEmail(userDto.getEmail()) != 0) {
             throw new RequestException("email already existing");
         } else if (userRepository.findUserByUserName(userDto.getUsername()) != 0) {
             throw new RequestException("username already existing");
@@ -68,25 +67,24 @@ public class UserService {
         UserDb userDb = CreatedUserMapper.toEntity(userDto);
         int result = userRepository.createUser(userDb.getUsername(), userDb.getEmail(), hashedPassword);
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Object currentPrincipalName = authentication.getPrincipal();
         return result;
     }
 
-    public int updateUser(UserDb user){
+
+    public int updateUser(UserDb user) {
         //Retrieves authenticate user
         CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         int currentPrincipalId = customUserDetails.getId();
 
         //Check if it's the same ID
-        if(!(currentPrincipalId == user.getId())){
+        if (!(currentPrincipalId == user.getId())) {
             throw new RequestException("You are not allowed to update this user.");
         }
 
-        if(user.getUsername() != null && userRepository.findUserByUserName(user.getUsername()) != 0){
-            throw  new RequestException("Username already used");
+        if (user.getUsername() != null && userRepository.findUserByUserName(user.getUsername()) != 0) {
+            throw new RequestException("Username already used");
         }
-        if(user.getEmail() != null && userRepository.findUserByEmail(user.getEmail()) != 0){
+        if (user.getEmail() != null && userRepository.findUserDbByEmail(user.getEmail()) != 0) {
             throw new RequestException("email already existing");
         }
 

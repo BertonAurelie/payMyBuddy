@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link th:href="@{/css/profil.css}" rel="stylesheet">
+    <!--ajout kit font awesome-->
+    <script src="https://kit.fontawesome.com/ab674341b6.js" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <title>Pay My Buddy</title>
+  </head>
+  <body>
+    <header>
+      <div class="logo">
+        <p>Pay My Buddy</p>
+      </div>
+      <nav class = "nav-bar">
+        <a class="nav-bar__button" th:href="@{/transfert}">transfer</a>
+        <a class="nav-bar__button" th:href="@{/profil}" id="focus-page">Profil</a>
+        <a class="nav-bar__button" th:href="@{/relationPage}">Ajouter relation</a>
+        <a class="nav-bar__button" th:href="@{/logout}">Se déconnecter</a>
+      </nav>
+    </header>
+
+    <main>
+      <div th:if="${error}" style="color: red;">
+        <p th:text="${error}"></p>
+      </div>
+
+      <form action="#" th:action="@{/profil}" th:object="${UpdatedUserDto}" method="post" class="form-container">
+
+        <div class ="container">
+          <div class="input-container">
+            <span>Username</span>
+            <input
+                    type="text"
+                    name="username"
+                    class="input-bar"
+                    th:field="*{username}"
+                    th:placeholder="*{username}"
+            >
+            <i class="fa-solid fa-chevron-right"></i>
+          </div>
+          <div class="input-container">
+            <span>Mail</span>
+            <input
+                    type="text"
+                    name="email"
+                    class="input-bar"
+                    th:field="*{email}"
+                    th:placeholder="*{email}"
+            >
+            <i class="fa-solid fa-chevron-right"></i>
+          </div>
+          <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red "> </p>
+          <div class="input-container">
+            <span>Mot de passe</span>
+            <input
+                    type="text"
+                    name="password"
+                    class="input-bar"
+                    placeholder="*{password}"
+            >
+            <i class="fa-solid fa-chevron-right"></i>
+          </div>
+        </div>
+        <button type="submit">Modifier</button>
+      </form>
+    </main>
+  </body>
+</html>

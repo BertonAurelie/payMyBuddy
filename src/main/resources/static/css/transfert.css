@@ -45,7 +45,7 @@ header {
         text-decoration: none;
     }
 
-.nav-bar__button:active {
+#focus-page {
     color:#207FEE;
     font-weight: 700;
 }

@@ -4,6 +4,7 @@ import com.aboc.payMyBuddy.exception.RequestException;
 import com.aboc.payMyBuddy.model.CustomUserDetails;
 import com.aboc.payMyBuddy.model.UserDb;
 import com.aboc.payMyBuddy.model.dto.mapper.CreatedUserMapper;
+import com.aboc.payMyBuddy.model.dto.mapper.UpdatedUserMapper;
 import com.aboc.payMyBuddy.model.dto.request.CreatedUserDto;
 import com.aboc.payMyBuddy.model.dto.request.UpdatedUserDto;
 import com.aboc.payMyBuddy.repository.UserRepository;
@@ -22,7 +23,6 @@ public class UserService {
     @Autowired
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
@@ -73,29 +73,34 @@ public class UserService {
     }
 
 
-    public int updateUser(UserDb user) {
+    public int updateUser(UpdatedUserDto userDto) {
         //Retrieves authenticate user
-        CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         int currentPrincipalId = customUserDetails.getId();
 
-        //Check if it's the same ID
-        if (!(currentPrincipalId == user.getId())) {
-            throw new RequestException("You are not allowed to update this user.");
+        //On récupère les données de l'utilisateur connecté
+        UserDb userDb = userRepository.findUserById(currentPrincipalId);
+
+        if (!(userDto.getUsername().equalsIgnoreCase(userDb.getUsername()))) {
+            if(userRepository.findUserByUserName(userDto.getUsername()) != 0){
+                throw new RequestException("Username already used");
+            }
+        }
+        if (!(userDto.getEmail().equalsIgnoreCase(userDb.getEmail()))) {
+            if(userRepository.findUserDbByEmail(userDto.getEmail()) != 0){
+                throw new RequestException("email already existing");
+            }
         }
 
-        if (user.getUsername() != null && userRepository.findUserByUserName(user.getUsername()) != 0) {
-            throw new RequestException("Username already used");
-        }
-        if (user.getEmail() != null && userRepository.findUserDbByEmail(user.getEmail()) != 0) {
-            throw new RequestException("email already existing");
+        if (userDto.getPassword() != null && !(userDto.getPassword().equals(""))) {
+            String hashedPassword = passwordEncoder.encode(userDto.getPassword());
+            userDto.setPassword(hashedPassword);
         }
 
-        if (user.getPassword() != null) {
-            String hashedPassword = passwordEncoder.encode(user.getPassword());
-            user.setPassword(hashedPassword);
-        }
-
-        int result = userRepository.updateUser(currentPrincipalId, user.getUsername(), user.getEmail(), user.getPassword(), user.getSolde());
+        UserDb user = UpdatedUserMapper.toEntity(userDto);
+        user.setId(currentPrincipalId);
+        int result = userRepository.updateUser(user.getId(), user.getUsername(), user.getEmail(), user.getPassword(), user.getSolde());
         return result;
     }
 
@@ -105,18 +110,13 @@ public class UserService {
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         int currentPrincipalId = customUserDetails.getId();
 
-        //On récupère les données de l'utilisateur connecté
         UserDb userDb = userRepository.findUserById(currentPrincipalId);
 
-        // On cherche l'ami à ajouter via son email
         UserDb friendDb = userRepository.findUserByEmail(friend.getEmail());
 
-        // Si l'ami existe et qu'il n'est pas déjà dans la liste
         if (friendDb != null && !userDb.getFriends().contains(friendDb)) {
-            //On l'ajoute à la liste des amis de l'utilisateur connecté
             userDb.getFriends().add(friendDb);
 
-            // On sauvegarde les nouvelles données dans la base de données
             userRepository.save(userDb);
         }
     }

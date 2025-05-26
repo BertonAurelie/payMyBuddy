@@ -3,6 +3,7 @@ package com.aboc.payMyBuddy.controller;
 import com.aboc.payMyBuddy.exception.RequestException;
 import com.aboc.payMyBuddy.model.UserDb;
 import com.aboc.payMyBuddy.model.dto.request.CreatedUserDto;
+import com.aboc.payMyBuddy.model.dto.request.UpdatedUserDto;
 import com.aboc.payMyBuddy.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -29,7 +30,7 @@ public class UserController {
     }
 
     @PutMapping("/users/update")
-    public ResponseEntity<String> putUser(@RequestBody @Valid UserDb user) throws Exception {
+    public ResponseEntity<String> putUser(@RequestBody @Valid UpdatedUserDto user) throws Exception {
         int result = userService.updateUser(user);
 
         if (result == 1) {

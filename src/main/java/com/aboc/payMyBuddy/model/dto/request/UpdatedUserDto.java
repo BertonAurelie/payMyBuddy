@@ -1,11 +1,16 @@
 package com.aboc.payMyBuddy.model.dto.request;
 
+import jakarta.validation.constraints.Email;
+
 import java.math.BigDecimal;
 
 public class UpdatedUserDto {
     private int id;
     private String username;
+
+    @Email(regexp = ".+@.+\\..+", message = "Please provide a valid email address")
     private String email;
+
     private String password;
     private BigDecimal solde;
 

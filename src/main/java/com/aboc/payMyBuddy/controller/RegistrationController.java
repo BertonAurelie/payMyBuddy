@@ -37,7 +37,7 @@ public class RegistrationController {
         try {
             userService.createUser(userDto);
             System.out.println("Création utilisateur OK, redirection...");
-            return "redirect:/login"; // ou page de succès
+            return "redirect:/login";
         } catch (RequestException e) {
             model.addAttribute("error", e.getMessage());
             return "registration";

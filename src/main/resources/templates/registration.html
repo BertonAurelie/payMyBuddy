@@ -17,7 +17,6 @@
             <logo >
                 <p id="logo">Pay My Buddy</p>
             </logo>
-
             <div class="container">
                 <input
                         type = "text"
@@ -26,6 +25,9 @@
                         class="input-form"
                         th:field="*{username}"
                 >
+                <div th:if="${#fields.hasErrors('username')}" style="color: red;">
+                    <p th:errors="*{username}"></p>
+                </div>
                 <input
                         type = "text"
                         id="mail"
@@ -33,6 +35,9 @@
                         class="input-form"
                         th:field="*{email}"
                 >
+                <div th:if="${#fields.hasErrors('email')}" style="color: red;">
+                    <p th:errors="*{email}"></p>
+                </div>
                 <input
                         type = "text"
                         id="password"
@@ -40,6 +45,9 @@
                         class="input-form"
                         th:field="*{password}"
                 >
+                <div th:if="${#fields.hasErrors('password')}" style="color: red;">
+                    <p th:errors="*{password}"></p>
+                </div>
             </div>
 
             <button type = "submit"> S'inscrire</button>

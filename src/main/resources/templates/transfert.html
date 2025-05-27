@@ -8,7 +8,8 @@
     <script src="https://kit.fontawesome.com/ab674341b6.js" crossorigin="anonymous"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+          rel="stylesheet">
     <title>Document</title>
 </head>
 <body>
@@ -16,18 +17,19 @@
     <div class="logo">
         <p>Pay My Buddy</p>
     </div>
-    <nav class = "nav-bar">
+    <nav class="nav-bar">
         <a class="nav-bar__button" th:href="@{/transfert}" id="focus-page">transfer</a>
         <a class="nav-bar__button" th:href="@{/profil}">Profil</a>
-        <a class="nav-bar__button" th:href="@{/relationPage}" >Ajouter relation</a>
+        <a class="nav-bar__button" th:href="@{/relationPage}">Ajouter relation</a>
         <a class="nav-bar__button" th:href="@{/logout}">Se déconnecter</a>
     </nav>
 </header>
 <main>
     <div class="transfert-container">
         <form>
-            <select name="transfert-form" id="transfert-select">
+            <select name="transfert-form" id="dropDownList">
                 <option value="">Sélectionner une relation</option>
+                <option th:each="option : ${options}" th:value="${option}" th:text="${option}"></option>
             </select>
             <input
                     type="text"

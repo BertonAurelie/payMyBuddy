@@ -3,7 +3,7 @@ package com.aboc.payMyBuddy.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "Transaction")
+@Table(name = "TransactionDb")
 public class Transaction {
 
     @Id
@@ -11,20 +11,22 @@ public class Transaction {
     @Column(name = "id")
     private int id;
 
-    @Column(name = "sender")
-    private String sender;
+    @ManyToOne
+    @JoinColumn(name = "sender_id")
+    private UserDb sender;
 
-    @Column(name = "receiver")
-    private String receiver;
+    @ManyToOne
+    @JoinColumn(name = "receiver_id")
+    private UserDb receiver;
 
-    @Column(name = "description")
+    @Column(name = "description_transaction")
     private String description;
 
     @Column(name = "amount")
     private double amount;
 
     //Constructor
-    public Transaction(int id, String sender, String receiver, String description, double amount) {
+    public Transaction(int id, UserDb sender, UserDb receiver, String description, double amount) {
         this.id = id;
         this.sender = sender;
         this.receiver = receiver;
@@ -33,6 +35,7 @@ public class Transaction {
     }
 
     //Getter et Setter
+
     public int getId() {
         return id;
     }
@@ -41,19 +44,19 @@ public class Transaction {
         this.id = id;
     }
 
-    public String getSender() {
+    public UserDb getSender() {
         return sender;
     }
 
-    public void setSender(String sender) {
+    public void setSender(UserDb sender) {
         this.sender = sender;
     }
 
-    public String getReceiver() {
+    public UserDb getReceiver() {
         return receiver;
     }
 
-    public void setReceiver(String receiver) {
+    public void setReceiver(UserDb receiver) {
         this.receiver = receiver;
     }
 

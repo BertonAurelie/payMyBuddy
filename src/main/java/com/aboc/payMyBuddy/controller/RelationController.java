@@ -1,5 +1,7 @@
 package com.aboc.payMyBuddy.controller;
 
+import com.aboc.payMyBuddy.exception.RequestException;
+import com.aboc.payMyBuddy.model.dto.request.CreatedUserDto;
 import com.aboc.payMyBuddy.model.dto.request.UpdatedUserDto;
 import com.aboc.payMyBuddy.service.UserService;
 import jakarta.validation.Valid;
@@ -19,7 +21,8 @@ public class RelationController {
     }
 
     @GetMapping("/relationPage")
-    public String getRelationPage() {
+    public String getRelationPage(Model model) {
+        model.addAttribute("UpdatedUserDto", new UpdatedUserDto());
         System.out.println("Accès à relationPage");
         return "relationPage";
     }
@@ -28,15 +31,20 @@ public class RelationController {
     public String processAddFriend(@ModelAttribute("UpdatedUserDto") @Valid UpdatedUserDto userDto,
                                    BindingResult result,
                                    Model model) {
+
+        if (result.hasErrors()) {
+            return "relationPage";
+        }
+
         try {
             userService.addFriend(userDto);
             System.out.println("Ajout de la relation, redirection...");
             return "redirect:/transfert";
-        } catch (Exception e) {
+        } catch (RequestException e) {
             System.out.println("échec de l'ajout de relation");
-            return "relation";
+            model.addAttribute("error", e.getMessage());
+            return "relationPage";
         }
 
-        //TODO:: Ajout gestion d'erreur
     }
 }

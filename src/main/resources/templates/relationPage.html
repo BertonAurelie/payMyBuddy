@@ -22,6 +22,10 @@
     </nav>
 </header>
 <main>
+    <div th:if="${error}" style="color: red;">
+        <p th:text="${error}"></p>
+    </div>
+
     <form action="#" th:action="@{/relation}" th:object="${UpdatedUserDto}" method="post" class="form-container">
         <div class="input-container">
             <label for="input-bar">Chercher une relation</label>
@@ -30,7 +34,11 @@
                     id="input-bar"
                     name="email"
                     placeholder="Saisir une adresse mail"
+                    th:field="*{email}"
             >
+            <div th:if="${#fields.hasErrors('email')}" style="color: red;">
+                <p th:errors="*{email}"></p>
+            </div>
         </div>
         <button type="submit" class="input-button">Ajouter</button>
     </form>

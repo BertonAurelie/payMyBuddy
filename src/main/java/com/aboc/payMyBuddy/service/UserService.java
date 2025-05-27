@@ -11,11 +11,13 @@ import com.aboc.payMyBuddy.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.security.core.Authentication;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -83,12 +85,12 @@ public class UserService {
         UserDb userDb = userRepository.findUserById(currentPrincipalId);
 
         if (!(userDto.getUsername().equalsIgnoreCase(userDb.getUsername()))) {
-            if(userRepository.findUserByUserName(userDto.getUsername()) != 0){
+            if (userRepository.findUserByUserName(userDto.getUsername()) != 0) {
                 throw new RequestException("Username already used");
             }
         }
         if (!(userDto.getEmail().equalsIgnoreCase(userDb.getEmail()))) {
-            if(userRepository.findUserDbByEmail(userDto.getEmail()) != 0){
+            if (userRepository.findUserDbByEmail(userDto.getEmail()) != 0) {
                 throw new RequestException("email already existing");
             }
         }
@@ -104,7 +106,7 @@ public class UserService {
         return result;
     }
 
-    public void addFriend(UpdatedUserDto friend){
+    public void addFriend(UpdatedUserDto friend) {
         //Retrieves authenticate user
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
@@ -114,10 +116,34 @@ public class UserService {
 
         UserDb friendDb = userRepository.findUserByEmail(friend.getEmail());
 
+
+        if (userRepository.findUserDbByEmail(friend.getEmail()) == 0) {
+            throw new RequestException("unknown user");
+        }
+
         if (friendDb != null && !userDb.getFriends().contains(friendDb)) {
             userDb.getFriends().add(friendDb);
 
             userRepository.save(userDb);
+        } else {
+            throw new RequestException("already a friend ");
         }
+    }
+
+    public List<String> showListFriends() {
+        //Retrieves authenticate user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+        int currentPrincipalId = customUserDetails.getId();
+
+        UserDb userDb = userRepository.findUserById(currentPrincipalId);
+
+        List<String> listFriends = new ArrayList<>();
+
+        for (UserDb friend : userDb.getFriends()) {
+            listFriends.add(friend.getUsername());
+        }
+
+        return listFriends;
     }
 }

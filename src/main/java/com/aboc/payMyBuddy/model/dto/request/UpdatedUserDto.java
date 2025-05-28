@@ -12,7 +12,7 @@ public class UpdatedUserDto {
     private String email;
 
     private String password;
-    private BigDecimal solde;
+    private double solde;
 
     public UpdatedUserDto() {
     }
@@ -49,11 +49,11 @@ public class UpdatedUserDto {
         this.password = password;
     }
 
-    public BigDecimal getSolde() {
+    public double getSolde() {
         return solde;
     }
 
-    public void setSolde(BigDecimal solde) {
+    public void setSolde(double solde) {
         this.solde = solde;
     }
 }

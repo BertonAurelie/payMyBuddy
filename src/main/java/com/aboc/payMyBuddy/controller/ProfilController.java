@@ -38,8 +38,6 @@ public class ProfilController {
                 .orElseThrow(() -> new RequestException("User not found"));
 
         UpdatedUserDto userDto = UpdatedUserMapper.toDto(user);
-        System.out.println("loading profil page");
-
         model.addAttribute("UpdatedUserDto", userDto);
         return "profil";
     }

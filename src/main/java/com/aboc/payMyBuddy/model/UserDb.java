@@ -27,7 +27,7 @@ public class UserDb {
     private String password;
 
     @Column(name = "solde")
-    private BigDecimal solde;
+    private double solde;
 
     @Transient
     private String role;
@@ -50,7 +50,7 @@ public class UserDb {
     public UserDb() {
     }
 
-    public UserDb(String username, String email, String password, BigDecimal solde) {
+    public UserDb(String username, String email, String password, double solde) {
         this.username = username;
         this.email = email;
         this.password = password;
@@ -90,11 +90,11 @@ public class UserDb {
         this.password = password;
     }
 
-    public BigDecimal getSolde() {
+    public double getSolde() {
         return solde;
     }
 
-    public void setSolde(BigDecimal solde) {
+    public void setSolde(double solde) {
         this.solde = solde;
     }
 

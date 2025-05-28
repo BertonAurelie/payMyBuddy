@@ -21,13 +21,17 @@
         <a class="nav-bar__button" th:href="@{/transfert}" id="focus-page">transfer</a>
         <a class="nav-bar__button" th:href="@{/profil}">Profil</a>
         <a class="nav-bar__button" th:href="@{/relationPage}">Ajouter relation</a>
+        <a class="nav-bar__button" th:href="@{/deposit}">Créditer compte</a>
         <a class="nav-bar__button" th:href="@{/logout}">Se déconnecter</a>
     </nav>
 </header>
 <main>
     <div class="transfert-container">
-        <form>
-            <select name="transfert-form" id="dropDownList">
+        <div th:if="${error}" style="color: red;">
+            <p th:text="${error}"></p>
+        </div>
+        <form action="#" th:action="@{/transfert}" th:object="${TransactionDto}" method="post">
+            <select name="transfert-form" id="dropDownList" th:field="*{receiver}">
                 <option value="">Sélectionner une relation</option>
                 <option th:each="option : ${options}" th:value="${option}" th:text="${option}"></option>
             </select>
@@ -35,12 +39,14 @@
                     type="text"
                     id="transfert-form__input"
                     placeholder="Description"
+                    th:field="*{description}"
             >
             <div class="solde-container">
                 <input
                         type="text"
                         id="solde-container__input"
                         value="0 €"
+                        th:field="*{amount}"
                 >
                 <div class="choice--solde">
                     <button type="button" class="arrow"><i class="fa-solid fa-chevron-up"></i></button>
@@ -55,11 +61,20 @@
     <div class="history-container">
         <span>Mes Transactions</span>
         <table>
+            <thead>
             <tr class="table-header">
                 <td>Relations</td>
                 <td>Description</td>
                 <td>Montant</td>
             </tr>
+            </thead>
+            <tbody class="historique">
+                <tr th:each="transaction : ${transaction}">
+                    <td th:text="${transaction.receiver.username}"></td>
+                    <td th:text="${transaction.description}"></td>
+                    <td th:text="${transaction.amount}"></td>
+                </tr>
+            </tbody>
         </table>
     </div>
 </main>

@@ -17,15 +17,17 @@ public interface UserRepository extends CrudRepository<UserDb, Integer> {
     int findUserDbByEmail(@Param("mail") String mail);
 
     @Query(value = "SELECT COUNT(*) FROM user WHERE username = :username", nativeQuery = true)
-    int findUserByUserName(@Param("username") String username);
+    int findUserDbByUserName(@Param("username") String username);
 
     @Procedure(procedureName = "create_user_if_email_not_existing")
     int createUser(String user_username, String user_email, String user_password);
 
     @Procedure(procedureName = "update_user")
-    int updateUser(int user_id, String user_username, String user_email, String user_password, BigDecimal user_solde);
+    int updateUser(int user_id, String user_username, String user_email, String user_password, double user_solde);
 
     public UserDb findUserByEmail(String email);
 
     public UserDb findUserById(int id);
+
+    public UserDb findUserByUsername(String username);
 }

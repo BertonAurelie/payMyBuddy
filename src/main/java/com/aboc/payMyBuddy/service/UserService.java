@@ -2,11 +2,14 @@ package com.aboc.payMyBuddy.service;
 
 import com.aboc.payMyBuddy.exception.RequestException;
 import com.aboc.payMyBuddy.model.CustomUserDetails;
+import com.aboc.payMyBuddy.model.Transaction;
 import com.aboc.payMyBuddy.model.UserDb;
 import com.aboc.payMyBuddy.model.dto.mapper.CreatedUserMapper;
 import com.aboc.payMyBuddy.model.dto.mapper.UpdatedUserMapper;
 import com.aboc.payMyBuddy.model.dto.request.CreatedUserDto;
+import com.aboc.payMyBuddy.model.dto.request.TransactionDto;
 import com.aboc.payMyBuddy.model.dto.request.UpdatedUserDto;
+import com.aboc.payMyBuddy.repository.TransactionRepository;
 import com.aboc.payMyBuddy.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +19,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,12 +29,17 @@ import java.util.Optional;
 public class UserService {
     @Autowired
     private final UserRepository userRepository;
+
+    @Autowired
+    private final TransactionRepository transactionRepository;
+
     private final PasswordEncoder passwordEncoder;
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, TransactionRepository transactionRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.transactionRepository = transactionRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -62,7 +72,7 @@ public class UserService {
 
         if (userRepository.findUserDbByEmail(userDto.getEmail()) != 0) {
             throw new RequestException("email already existing");
-        } else if (userRepository.findUserByUserName(userDto.getUsername()) != 0) {
+        } else if (userRepository.findUserDbByUserName(userDto.getUsername()) != 0) {
             throw new RequestException("username already existing");
         }
 
@@ -81,11 +91,12 @@ public class UserService {
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         int currentPrincipalId = customUserDetails.getId();
 
+
         //On récupère les données de l'utilisateur connecté
         UserDb userDb = userRepository.findUserById(currentPrincipalId);
 
         if (!(userDto.getUsername().equalsIgnoreCase(userDb.getUsername()))) {
-            if (userRepository.findUserByUserName(userDto.getUsername()) != 0) {
+            if (userRepository.findUserDbByUserName(userDto.getUsername()) != 0) {
                 throw new RequestException("Username already used");
             }
         }
@@ -103,6 +114,36 @@ public class UserService {
         UserDb user = UpdatedUserMapper.toEntity(userDto);
         user.setId(currentPrincipalId);
         int result = userRepository.updateUser(user.getId(), user.getUsername(), user.getEmail(), user.getPassword(), user.getSolde());
+        return result;
+    }
+
+    public int moneyDeposit(UpdatedUserDto userDto, int valueAction) {
+        //Retrieves authenticate user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+        int currentPrincipalId = customUserDetails.getId();
+
+
+        //On récupère les données de l'utilisateur connecté
+        UserDb userDb = userRepository.findUserById(currentPrincipalId);
+
+        double solde = userDb.getSolde();
+        if (userDto.getSolde() != 0 && valueAction == 0) {
+            solde += userDto.getSolde();
+            solde = BigDecimal.valueOf(solde).setScale(2, RoundingMode.FLOOR).doubleValue();
+        }
+
+        if(userDto.getSolde() != 0 && valueAction == 1){
+            if(userDb.getSolde() > userDto.getSolde()){
+                solde -= userDto.getSolde();
+                solde = BigDecimal.valueOf(solde).setScale(2, RoundingMode.FLOOR).doubleValue();
+            } else {
+                throw new RequestException("fonds insuffisants");
+            }
+        }
+
+
+        int result = userRepository.updateUser(currentPrincipalId, userDb.getUsername(), userDb.getEmail(), userDb.getPassword(), solde);
         return result;
     }
 
@@ -145,5 +186,35 @@ public class UserService {
         }
 
         return listFriends;
+    }
+
+    public void sendMoney(TransactionDto transactiondto) {
+        //Retrieves authenticate user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+        int currentPrincipalId = customUserDetails.getId();
+
+        UserDb sender = userRepository.findUserById(currentPrincipalId);
+
+        UserDb receiver = userRepository.findUserByUsername(transactiondto.getReceiver());
+
+        if (receiver != null && transactiondto.getDescription() != null && transactiondto.getAmount() > 0) {
+            Transaction transactionSave = new Transaction(sender, receiver, transactiondto.getDescription(), transactiondto.getAmount());
+            transactionRepository.save(transactionSave);
+            receiver.setSolde(receiver.getSolde() + transactiondto.getAmount());
+            userRepository.save(receiver);
+        }
+
+    }
+
+    public List<Transaction> showTransaction() {
+        //Retrieves authenticate user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+        int currentPrincipalId = customUserDetails.getId();
+
+        List<Transaction> transactionList = transactionRepository.findTransactionBySenderId(currentPrincipalId);
+
+        return transactionList;
     }
 }

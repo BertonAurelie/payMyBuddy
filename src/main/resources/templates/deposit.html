@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-    <title>Document</title>
+    <title>Pay My Buddy</title>
 </head>
 <body>
 <header>
@@ -17,8 +17,8 @@
     <nav class = "nav-bar">
         <a class="nav-bar__button" th:href="@{/transfert}">transfer</a>
         <a class="nav-bar__button" th:href="@{/profil}">Profil</a>
-        <a class="nav-bar__button" th:href="@{/relationPage}" id="focus-page">Ajouter relation</a>
-        <a class="nav-bar__button" th:href="@{/deposit}">Créditer compte</a>
+        <a class="nav-bar__button" th:href="@{/relationPage}">Ajouter relation</a>
+        <a class="nav-bar__button" th:href="@{/deposit}" id="focus-page">Créditer compte</a>
         <a class="nav-bar__button" th:href="@{/logout}">Se déconnecter</a>
     </nav>
 </header>
@@ -26,22 +26,28 @@
     <div th:if="${error}" style="color: red;">
         <p th:text="${error}"></p>
     </div>
-
-    <form action="#" th:action="@{/relation}" th:object="${UpdatedUserDto}" method="post" class="form-container">
+    <form action="#" th:action="@{/deposit}" th:object="${UpdatedUserDto}" method="post" class="form-container">
         <div class="input-container">
-            <label for="input-bar">Chercher une relation</label>
-            <input
-                    type = "text"
-                    id="input-bar"
-                    name="email"
-                    placeholder="Saisir une adresse mail"
-                    th:field="*{email}"
-            >
-            <div th:if="${#fields.hasErrors('email')}" style="color: red;">
-                <p th:errors="*{email}"></p>
+            <div id="checkbox-container">
+                <legend for="input-bar">Montant à :</legend>
+
+                <input type="radio" id="depot" name="action" value="depot" checked>
+                <label for="depot"> déposer</label><br>
+
+                <input type="radio" id="retrait" name="action" value="retrait">
+                <label for="retrait"> retirer</label><br>
             </div>
+            <input
+                    type="number"
+                    id="input-bar"
+                    name="solde"
+                    placeholder="Entrez un montant"
+                    step="0.01"
+                    th:field="*{solde}"
+            >
         </div>
-        <button type="submit" class="input-button">Ajouter</button>
+
+        <button type="submit" class="input-button">Déposer</button>
     </form>
 </main>
 </body>

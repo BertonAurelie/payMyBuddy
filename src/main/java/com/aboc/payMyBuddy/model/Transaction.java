@@ -3,7 +3,7 @@ package com.aboc.payMyBuddy.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "TransactionDb")
+@Table(name = "Transactions")
 public class Transaction {
 
     @Id
@@ -26,12 +26,14 @@ public class Transaction {
     private double amount;
 
     //Constructor
-    public Transaction(int id, UserDb sender, UserDb receiver, String description, double amount) {
-        this.id = id;
+    public Transaction( UserDb sender, UserDb receiver, String description, double amount) {
         this.sender = sender;
         this.receiver = receiver;
         this.description = description;
         this.amount = amount;
+    }
+
+    public Transaction() {
     }
 
     //Getter et Setter

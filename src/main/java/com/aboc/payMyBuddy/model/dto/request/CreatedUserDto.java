@@ -10,7 +10,6 @@ import jakarta.validation.constraints.NotBlank;
  * does not use solde attribute for this DTO. Only username, email and password.
  */
 public class CreatedUserDto {
-
     @NotBlank(message = "username may not be empty")
     private String username;
 

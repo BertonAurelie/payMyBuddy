@@ -20,6 +20,4 @@ public class CustomUserDetails extends User {
     public void setId(int id) {
         this.id = id;
     }
-
-
 }

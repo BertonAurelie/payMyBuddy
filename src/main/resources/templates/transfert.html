@@ -27,37 +27,49 @@
 </header>
 <main>
     <div class="transfert-container">
-        <div th:if="${error}" style="color: red;">
-            <p th:text="${error}"></p>
-        </div>
         <form action="#" th:action="@{/transfert}" th:object="${TransactionDto}" method="post">
-            <select name="transfert-form" id="dropDownList" th:field="*{receiver}">
-                <option value="">Sélectionner une relation</option>
-                <option th:each="option : ${options}" th:value="${option}" th:text="${option}"></option>
-            </select>
+            <div class="transfert-form__select">
+                <select name="transfert-form" id="dropDownList" th:field="*{receiver}">
+                    <option value="">Sélectionner une relation</option>
+                    <option th:each="option : ${options}" th:value="${option}" th:text="${option}"></option>
+                </select>
+                <div th:if="${#fields.hasErrors('receiver')}" style="color: red;">
+                    <p th:errors="*{receiver}"></p>
+                </div>
+            </div>
+            <div class="transfert-form__select">
             <input
                     type="text"
                     id="transfert-form__input"
                     placeholder="Description"
                     th:field="*{description}"
             >
-            <div class="solde-container">
+            <div th:if="${#fields.hasErrors('description')}" style="color: red;">
+                <p th:errors="*{description}"></p>
+            </div>
+            </div>
+            <div  class="transfert-form__select">
                 <input
-                        type="text"
+                        type="number"
                         id="solde-container__input"
                         value="0 €"
+                        step="0.01"
                         th:field="*{amount}"
                 >
-                <div class="choice--solde">
-                    <button type="button" class="arrow"><i class="fa-solid fa-chevron-up"></i></button>
-                    <button type="button" class="arrow"><i class="fa-solid fa-chevron-down"></i></button>
+                <div th:if="${#fields.hasErrors('amount')}" style="color: red;">
+                    <p th:errors="*{amount}"></p>
                 </div>
             </div>
             <button id="pay-button">
                 Payer
             </button>
         </form>
+
     </div>
+    <div th:if="${error}" style="color: red;">
+        <p th:text="${error}"></p>
+    </div>
+
     <div class="history-container">
         <span>Mes Transactions</span>
         <table>

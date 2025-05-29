@@ -72,6 +72,11 @@ main {
     align-items: center;
 }
 
+.transfert-form__select{
+    display:flex;
+    flex-direction:column;
+}
+
 #dropDownList{
     width:399px;
     height:81px;
@@ -94,20 +99,16 @@ main {
     color: black;
 }
 
-.solde-container{
+#solde-container__input{
     width:189px;
     height:81px;
     display:flex;
     border-radius: 8px;
     border:1px solid #E0E0E0;
-}
-
-#solde-container__input{
-    width:78%;
-    border:none;
-    padding-left: 10px;
     font-weight: 500;
 }
+
+
 
 .choice--solde{
     display:flex;

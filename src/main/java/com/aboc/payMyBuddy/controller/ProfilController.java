@@ -8,6 +8,8 @@ import com.aboc.payMyBuddy.model.dto.request.UpdatedUserDto;
 import com.aboc.payMyBuddy.repository.UserRepository;
 import com.aboc.payMyBuddy.service.UserService;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class ProfilController {
     private final UserService userService;
     private final UserRepository userRepository;
+    private static final Logger logger = LoggerFactory.getLogger(ProfilController.class);
 
     public ProfilController(UserService userService, UserRepository userRepository) {
         this.userService = userService;
@@ -53,9 +56,10 @@ public class ProfilController {
 
         try {
             userService.updateUser(userDto);
-            System.out.println("modification utilisateur OK, redirection...");
+            logger.info("user successfully updated, redirection...");
             return "redirect:/transfert"; // ou page de succès
         } catch (RequestException e) {
+            logger.info("Unable to update user, redirection...");
             model.addAttribute("error", e.getMessage());
             return "profil";
         }

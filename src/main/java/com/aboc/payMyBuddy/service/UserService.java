@@ -29,12 +29,9 @@ import java.util.Optional;
 public class UserService {
     @Autowired
     private final UserRepository userRepository;
-
     @Autowired
     private final TransactionRepository transactionRepository;
-
     private final PasswordEncoder passwordEncoder;
-
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public UserService(UserRepository userRepository, TransactionRepository transactionRepository, PasswordEncoder passwordEncoder) {
@@ -86,14 +83,8 @@ public class UserService {
 
 
     public int updateUser(UpdatedUserDto userDto) {
-        //Retrieves authenticate user
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-        int currentPrincipalId = customUserDetails.getId();
-
-
         //On récupère les données de l'utilisateur connecté
-        UserDb userDb = userRepository.findUserById(currentPrincipalId);
+        UserDb userDb = userRepository.findUserById(getAuthId());
 
         if (!(userDto.getUsername().equalsIgnoreCase(userDb.getUsername()))) {
             if (userRepository.findUserDbByUserName(userDto.getUsername()) != 0) {
@@ -112,20 +103,14 @@ public class UserService {
         }
 
         UserDb user = UpdatedUserMapper.toEntity(userDto);
-        user.setId(currentPrincipalId);
+        user.setId(userDb.getId());
         int result = userRepository.updateUser(user.getId(), user.getUsername(), user.getEmail(), user.getPassword(), user.getSolde());
         return result;
     }
 
     public int moneyDeposit(UpdatedUserDto userDto, int valueAction) {
-        //Retrieves authenticate user
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-        int currentPrincipalId = customUserDetails.getId();
-
-
         //On récupère les données de l'utilisateur connecté
-        UserDb userDb = userRepository.findUserById(currentPrincipalId);
+        UserDb userDb = userRepository.findUserById(getAuthId());
 
         double solde = userDb.getSolde();
         if (userDto.getSolde() != 0 && valueAction == 0) {
@@ -133,30 +118,23 @@ public class UserService {
             solde = BigDecimal.valueOf(solde).setScale(2, RoundingMode.FLOOR).doubleValue();
         }
 
-        if(userDto.getSolde() != 0 && valueAction == 1){
-            if(userDb.getSolde() > userDto.getSolde()){
+        if (userDto.getSolde() != 0 && valueAction == 1) {
+            if (userDb.getSolde() > userDto.getSolde()) {
                 solde -= userDto.getSolde();
                 solde = BigDecimal.valueOf(solde).setScale(2, RoundingMode.FLOOR).doubleValue();
             } else {
-                throw new RequestException("fonds insuffisants");
+                throw new RequestException("insufficient funds");
             }
         }
 
 
-        int result = userRepository.updateUser(currentPrincipalId, userDb.getUsername(), userDb.getEmail(), userDb.getPassword(), solde);
+        int result = userRepository.updateUser(userDb.getId(), userDb.getUsername(), userDb.getEmail(), userDb.getPassword(), solde);
         return result;
     }
 
     public void addFriend(UpdatedUserDto friend) {
-        //Retrieves authenticate user
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-        int currentPrincipalId = customUserDetails.getId();
-
-        UserDb userDb = userRepository.findUserById(currentPrincipalId);
-
+        UserDb userDb = userRepository.findUserById(getAuthId());
         UserDb friendDb = userRepository.findUserByEmail(friend.getEmail());
-
 
         if (userRepository.findUserDbByEmail(friend.getEmail()) == 0) {
             throw new RequestException("unknown user");
@@ -172,12 +150,7 @@ public class UserService {
     }
 
     public List<String> showListFriends() {
-        //Retrieves authenticate user
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-        int currentPrincipalId = customUserDetails.getId();
-
-        UserDb userDb = userRepository.findUserById(currentPrincipalId);
+        UserDb userDb = userRepository.findUserById(getAuthId());
 
         List<String> listFriends = new ArrayList<>();
 
@@ -189,32 +162,42 @@ public class UserService {
     }
 
     public void sendMoney(TransactionDto transactiondto) {
-        //Retrieves authenticate user
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-        int currentPrincipalId = customUserDetails.getId();
-
-        UserDb sender = userRepository.findUserById(currentPrincipalId);
+        UserDb sender = userRepository.findUserById(getAuthId());
 
         UserDb receiver = userRepository.findUserByUsername(transactiondto.getReceiver());
 
         if (receiver != null && transactiondto.getDescription() != null && transactiondto.getAmount() > 0) {
-            Transaction transactionSave = new Transaction(sender, receiver, transactiondto.getDescription(), transactiondto.getAmount());
-            transactionRepository.save(transactionSave);
-            receiver.setSolde(receiver.getSolde() + transactiondto.getAmount());
-            userRepository.save(receiver);
+            double fee = BigDecimal.valueOf(0.5 / 100 * transactiondto.getAmount()).setScale(2, RoundingMode.FLOOR).doubleValue();
+
+            if (sender.getSolde() > transactiondto.getAmount() + fee) {
+                Transaction transactionSave = new Transaction(sender, receiver, transactiondto.getDescription(), transactiondto.getAmount(), fee);
+                transactionRepository.save(transactionSave);
+
+                receiver.setSolde(BigDecimal.valueOf(receiver.getSolde() + transactiondto.getAmount()).setScale(2, RoundingMode.FLOOR).doubleValue());
+                userRepository.save(receiver);
+
+                sender.setSolde(BigDecimal.valueOf(sender.getSolde() - (transactiondto.getAmount() + fee)).setScale(2, RoundingMode.FLOOR).doubleValue());
+                userRepository.save(sender);
+
+            } else {
+                throw new RequestException("insufficient funds");
+            }
         }
 
     }
 
     public List<Transaction> showTransaction() {
+        List<Transaction> transactionList = transactionRepository.findTransactionBySenderId(getAuthId());
+
+        return transactionList;
+    }
+
+    private int getAuthId() {
         //Retrieves authenticate user
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         int currentPrincipalId = customUserDetails.getId();
 
-        List<Transaction> transactionList = transactionRepository.findTransactionBySenderId(currentPrincipalId);
-
-        return transactionList;
+        return currentPrincipalId;
     }
 }

@@ -1,6 +1,7 @@
 package com.aboc.payMyBuddy.configuration;
 
 
+import com.aboc.payMyBuddy.exception.RequestException;
 import com.aboc.payMyBuddy.model.CustomUserDetails;
 import com.aboc.payMyBuddy.model.UserDb;
 import com.aboc.payMyBuddy.repository.UserRepository;
@@ -26,7 +27,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         UserDb userDb = userRepository.findUserByEmail(email);
 
         if (userDb == null) {
-            throw new RuntimeException("Unknown user");
+            throw new RequestException("Unknown user");
         }
 
         //Assigner un rôle par défaut si le rôle est null

@@ -25,12 +25,16 @@ public class Transaction {
     @Column(name = "amount")
     private double amount;
 
+    @Column(name = "fee")
+    private Double fee;
+
     //Constructor
-    public Transaction( UserDb sender, UserDb receiver, String description, double amount) {
+    public Transaction(UserDb sender, UserDb receiver, String description, double amount, Double fee) {
         this.sender = sender;
         this.receiver = receiver;
         this.description = description;
         this.amount = amount;
+        this.fee = fee;
     }
 
     public Transaction() {
@@ -76,5 +80,13 @@ public class Transaction {
 
     public void setAmount(double amount) {
         this.amount = amount;
+    }
+
+    public Double getFee() {
+        return fee;
+    }
+
+    public void setFee(Double fee) {
+        this.fee = fee;
     }
 }

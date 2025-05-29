@@ -13,7 +13,6 @@ public class TransactionDto {
     @Positive(message = "Amount must be positive")
     private double amount;
 
-
     public TransactionDto() {
     }
 
@@ -22,8 +21,6 @@ public class TransactionDto {
         this.description = description;
         this.amount = amount;
     }
-
-
 
     public String getReceiver() {
         return receiver;

@@ -5,9 +5,10 @@ import com.aboc.payMyBuddy.model.dto.request.UpdatedUserDto;
 
 public class UpdatedUserMapper {
 
-    public UpdatedUserMapper(){}
+    public UpdatedUserMapper() {
+    }
 
-    public static UserDb toEntity(UpdatedUserDto userDto){
+    public static UserDb toEntity(UpdatedUserDto userDto) {
         UserDb userDb = new UserDb();
 
         userDb.setUsername(userDto.getUsername());
@@ -18,7 +19,7 @@ public class UpdatedUserMapper {
         return userDb;
     }
 
-    public static UpdatedUserDto toDto(UserDb userDb){
+    public static UpdatedUserDto toDto(UserDb userDb) {
         UpdatedUserDto userDto = new UpdatedUserDto();
 
         userDto.setId(userDb.getId());
@@ -29,7 +30,6 @@ public class UpdatedUserMapper {
 
         return userDto;
     }
-
 
 
 }

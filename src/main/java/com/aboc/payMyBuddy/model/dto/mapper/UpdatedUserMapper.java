@@ -3,6 +3,10 @@ package com.aboc.payMyBuddy.model.dto.mapper;
 import com.aboc.payMyBuddy.model.UserDb;
 import com.aboc.payMyBuddy.model.dto.request.UpdatedUserDto;
 
+/**
+ * Mapper UpdatedUserMapper to user & user to UpdatedUserMapper.
+ * Used for Updating status of userService(UpdatedUserMapper method).
+ */
 public class UpdatedUserMapper {
 
     public UpdatedUserMapper() {

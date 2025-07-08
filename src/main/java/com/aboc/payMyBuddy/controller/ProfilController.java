@@ -19,6 +19,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+/**
+ * Controller class to handle the user profil page.
+ * Allows authenticated users to view and update their account information,
+ * such as username, email, and password.
+ */
 @Controller
 public class ProfilController {
     private final UserService userService;
@@ -30,6 +35,14 @@ public class ProfilController {
         this.userRepository = userRepository;
     }
 
+    /**
+     * Displays the profile page with the current user's information pre-filled.
+     * The user must be authenticated.
+     *
+     * @param model the model used to pass the user DTO to the view
+     * @return the profile view name
+     * @throws RequestException if the user is not found in the repository
+     */
     @GetMapping("/profil")
     public String getProfilPage(Model model) {
         //Retrieves authenticate user
@@ -45,6 +58,17 @@ public class ProfilController {
         return "profil";
     }
 
+    /**
+     * Handles submission of the updated user profile form.
+     * Validates the input and calls the service to perform the update.
+     * If successful, redirects to the transfer page; otherwise, returns to the profile page
+     * with validation errors or a service error.
+     *
+     * @param userDto
+     * @param result
+     * @param model
+     * @return redirect to the transfer page on success, or the profile view with errors
+     */
     @PostMapping("/profil")
     public String updateUser(@ModelAttribute("UpdatedUserDto") @Valid UpdatedUserDto userDto,
                              BindingResult result,

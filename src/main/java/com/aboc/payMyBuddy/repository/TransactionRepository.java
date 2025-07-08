@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface TransactionRepository extends CrudRepository<Transaction, Integer> {
-    public List<Transaction> findTransactionBySenderId(int id);
+    List<Transaction> findTransactionBySenderId(int id);
 }

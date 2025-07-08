@@ -3,6 +3,7 @@ package com.aboc.payMyBuddy.model.dto.request;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 
+
 public class TransactionDto {
     @NotBlank(message = "Receiver email is required")
     private String receiver;

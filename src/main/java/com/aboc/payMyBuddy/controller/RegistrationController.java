@@ -13,6 +13,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+/**
+ * Controller responsible for user registration.
+ * <p>
+ * Handles displaying the registration form and processing the registration submission.
+ */
 @Controller
 public class RegistrationController {
     private final UserService userService;
@@ -22,13 +27,31 @@ public class RegistrationController {
         this.userService = userService;
     }
 
-    //Affichage du formulaire
+    /**
+     * Displays the registration form to the user.
+     *
+     * @param model model to add the CreatedUserDto attribute for form binding
+     * @return the registration view name
+     */
     @GetMapping("/registration")
     public String showRegistrationForm(Model model) {
         model.addAttribute("CreatedUserDto", new CreatedUserDto());
         return "registration";
     }
 
+    /**
+     * Processes the registration form submission.
+     * <p>
+     * If validation errors are present, displays the form.
+     * Otherwise, attempts to create a new user.
+     * On success, redirects to the login page.
+     * On failure, adds an error message and displays the form.
+     *
+     * @param userDto the user data transfer object submitted by the form
+     * @param result  binding result for validation errors
+     * @param model   model to add error attributes if needed
+     * @return the next view name, either "registration" or a redirect to login
+     */
     @PostMapping("/registration")
     public String processRegistration(@ModelAttribute("CreatedUserDto") @Valid CreatedUserDto userDto,
                                       BindingResult result,

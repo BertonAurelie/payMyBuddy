@@ -1,0 +1,126 @@
+CREATE DATABASE IF NOT EXISTS `pay_my_buddy`;
+USE `pay_my_buddy`;
+
+-- Table: user
+DROP TABLE IF EXISTS `user`;
+CREATE TABLE `user` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `username` VARCHAR(45) NOT NULL,
+  `email` VARCHAR(150) NOT NULL,
+  `password` VARCHAR(250) DEFAULT NULL,
+  `solde` DOUBLE DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username` (`username`),
+  UNIQUE KEY `email` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Table: transactions
+DROP TABLE IF EXISTS `transactions`;
+CREATE TABLE `transactions` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `sender_id` INT(11) NOT NULL,
+  `receiver_id` INT(11) NOT NULL,
+  `description_transaction` VARCHAR(150) NOT NULL,
+  `amount` DOUBLE NOT NULL,
+  `fee` DOUBLE DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `sender_id` (`sender_id`),
+  KEY `receiver_id` (`receiver_id`),
+  CONSTRAINT `transactions_ibfk_1` FOREIGN KEY (`sender_id`) REFERENCES `user` (`id`),
+  CONSTRAINT `transactions_ibfk_2` FOREIGN KEY (`receiver_id`) REFERENCES `user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Table: user_relation
+DROP TABLE IF EXISTS `user_relation`;
+CREATE TABLE `user_relation` (
+  `user_id` INT(11) NOT NULL,
+  `friend_id` INT(11) NOT NULL,
+  PRIMARY KEY (`user_id`, `friend_id`),
+  KEY `friend_id` (`friend_id`),
+  CONSTRAINT `user_relation_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `user_relation_ibfk_2` FOREIGN KEY (`friend_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Procédure : create_user_if_email_not_existing
+DROP PROCEDURE IF EXISTS `create_user_if_email_not_existing`;
+DELIMITER ;;
+CREATE PROCEDURE `create_user_if_email_not_existing`(
+  IN user_username VARCHAR(45),
+  IN user_email VARCHAR(150),
+  IN user_password VARCHAR(250),
+  OUT result INT
+)
+BEGIN
+  DECLARE EXIT HANDLER FOR SQLEXCEPTION
+  BEGIN
+    SET result = 0;
+    ROLLBACK;
+  END;
+
+  START TRANSACTION;
+
+  INSERT INTO user (username, email, `password`, solde)
+  VALUES (user_username, user_email, user_password, 0);
+
+  SELECT ROW_COUNT() INTO result;
+  IF result > 0 THEN
+    SET result = 1;
+  END IF;
+
+  COMMIT;
+END ;;
+DELIMITER ;
+
+-- Procédure : update_user
+DROP PROCEDURE IF EXISTS `update_user`;
+DELIMITER ;;
+CREATE PROCEDURE `update_user`(
+  IN user_id INT,
+  IN user_username VARCHAR(45),
+  IN user_email VARCHAR(150),
+  IN user_password VARCHAR(250),
+  IN user_solde DOUBLE,
+  OUT result INT
+)
+BEGIN
+  DECLARE current_username VARCHAR(45);
+  DECLARE current_email VARCHAR(150);
+  DECLARE current_password VARCHAR(250);
+  DECLARE current_solde DOUBLE;
+  DECLARE current_id INT;
+
+  DECLARE EXIT HANDLER FOR SQLEXCEPTION
+  BEGIN
+    SET result = 0;
+    ROLLBACK;
+  END;
+
+  START TRANSACTION;
+
+  SELECT id, username, email, `password`, solde
+  INTO current_id, current_username, current_email, current_password, current_solde
+  FROM `user` WHERE id = user_id;
+
+  IF current_id IS NOT NULL THEN
+    IF user_username IS NOT NULL AND user_username <> current_username THEN
+      UPDATE `user` SET username = user_username WHERE id = user_id;
+    END IF;
+
+    IF user_email IS NOT NULL AND user_email <> current_email THEN
+      UPDATE `user` SET email = user_email WHERE id = user_id;
+    END IF;
+
+    IF user_password IS NOT NULL AND TRIM(user_password) <> '' AND user_password <> current_password THEN
+      UPDATE `user` SET `password` = user_password WHERE id = user_id;
+    END IF;
+
+    IF user_solde IS NOT NULL AND user_solde <> current_solde THEN
+      UPDATE `user` SET solde = user_solde WHERE id = user_id;
+    END IF;
+
+    SET result = 1;
+  END IF;
+
+  COMMIT;
+END ;;
+DELIMITER ;

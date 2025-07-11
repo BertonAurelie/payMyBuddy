@@ -63,7 +63,7 @@ public class DepositController {
         try {
             int valueAction = 0;
 
-            if (action.equals(MyEnumType.RETRAIT)) {
+            if (action.equals(MyEnumType.RETRAIT.name())) {
                 valueAction = 1;
             }
 

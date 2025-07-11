@@ -111,7 +111,7 @@ public class UserService {
         }
 
         if (userDto.getSolde() != 0 && valueAction == 1) {
-            if (userDb.getSolde() > userDto.getSolde()) {
+            if (userDb.getSolde() >= userDto.getSolde()) {
                 solde -= userDto.getSolde();
                 solde = roundToTwoDecimals(solde);
             } else {
